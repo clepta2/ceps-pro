@@ -3,7 +3,7 @@
  * Cloudflare Worker Anycast para CEP & Geolog Pro API (vicknovais03.workers.dev)
  * Base postal soberana, Geolog de 5.570 municípios, coordenadas GPS e auditoria LGPD.
  *
- * Rate Limiter Ativo: 1 req/s para Free (60 req/min = 86.400 req/dia máx) | 300 req/min para Pro
+ * Rate limiter local por isolate; não define cota diária global. Lotes reduzem chamadas.
  *
  * @license MIT
  * @see https://github.com/clepta2/ceps-pro
@@ -108,7 +108,7 @@ function saveToMemoryCache(cepLimpo, data) {
   });
 }
 
-// ─── Rate Limiter (1 req/s para Free = 86.400/dia máx) ───
+// ─── Rate Limiter local por isolate (não representa uma cota diária global) ───
 const ipBuckets = new Map();
 
 function checkRateLimit(ipOrKey, limit = 60, windowMs = 60000) {
@@ -367,7 +367,7 @@ export default {
       } catch (_) {}
     }
 
-    // 3. Autenticação & Rate Limiting (1 req/s para Free = 86.400 req/dia máx)
+    // O contador é local ao isolate; lotes permitem várias consultas por requisição.
     const apiKey = request.headers.get('x-api-key') ||
                    request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') ||
                    url.searchParams.get('api_key') ||
@@ -380,7 +380,7 @@ export default {
     if (!rl.ok && pathname !== '/health' && pathname !== '/status' && pathname !== '/' && pathname !== '/demo') {
       return new Response(JSON.stringify({
         ok: false,
-        error: 'Limite de requisições excedido. Máximo permitido: 1 req/segundo (60 req/min = 86.400 req/dia máx). Para vazão ilimitada, utilize sua chave x-api-key Pro.',
+        error: 'Limite temporário de requisições excedido. Aguarde o período indicado em Retry-After.',
         retryAfterSeconds: Math.ceil((rl.resetAt - Date.now()) / 1000)
       }, null, 2), {
         status: 429,
@@ -404,9 +404,8 @@ export default {
         status: 'online',
         autenticado: isPro,
         recursos: [
-          'Base Própria de 1.209.314 CEPs (DNE Correios)',
-          '111.450.000 Domicílios e Casas (CNEFE IBGE)',
-          'Geolog Offline Integrado (5.570 Municípios)',
+          'Consulta via KV se populado, com fallback BrasilAPI e ViaCEP',
+          'Geolog por dados de municípios integrados no Worker',
           'Hash Criptográfico de Auditoria (SHA-256 LGPD)'
         ],
         github: 'https://github.com/clepta2/ceps-pro'
@@ -425,6 +424,7 @@ export default {
           cluster: 'Cloudflare Edge Anycast',
           rotas: {
             consultar: 'GET /api/cep/:cep ou POST /api/cep',
+            lote: 'POST /api/cep/lote (até 50 CEPs Pro ou 5 gratuitos)',
             validar: 'GET /api/validar-cep?cep=...'
           },
           github: 'https://github.com/clepta2/ceps-pro'
@@ -446,6 +446,71 @@ export default {
       const validacao = validarCepEstrutura(cepRaw);
       return new Response(JSON.stringify(validacao, null, 2), {
         status: validacao.valido ? 200 : 422,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+      });
+    }
+
+    if (pathname === '/api/cep/lote' || pathname === '/api/ceps/lote') {
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ ok: false, error: 'Use POST com um array "ceps".' }), {
+          status: 405,
+          headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+        });
+      }
+
+      const lista = bodyJson && Array.isArray(bodyJson.ceps) ? bodyJson.ceps : null;
+      if (!lista || lista.length === 0) {
+        return new Response(JSON.stringify({ ok: false, error: 'Envie um array não vazio "ceps" no corpo JSON.' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+        });
+      }
+
+      const maxItems = isPro ? 50 : 5;
+      if (lista.length > maxItems) {
+        return new Response(JSON.stringify({
+          ok: false,
+          error: `O lote aceita até ${maxItems} CEPs por requisição neste plano.`,
+          maxItems
+        }), {
+          status: 413,
+          headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+        });
+      }
+
+      const resultados = [];
+      for (let i = 0; i < lista.length; i += 5) {
+        const loteAtual = lista.slice(i, i + 5);
+        const resolucoes = await Promise.all(loteAtual.map(async (item) => {
+          const cepLimpo = String(item || '').replace(/\D/g, '');
+          const validacao = validarCepEstrutura(cepLimpo);
+          if (!validacao.valido) {
+            return { cepInformado: String(item), ok: false, error: validacao.motivo };
+          }
+
+          const dados = await resolverCep(cepLimpo, env);
+          if (!dados) {
+            return { cep: cepLimpo, ok: false, error: 'CEP não localizado na base postal nacional.' };
+          }
+
+          const auditoria = await gerarHashAuditoria('cep', cepLimpo, request);
+          return {
+            ...dados,
+            ok: true,
+            auditoria,
+            plano: isPro ? 'Pro' : 'Gratuito'
+          };
+        }));
+        resultados.push(...resolucoes);
+      }
+
+      return new Response(JSON.stringify({
+        ok: true,
+        totalSolicitado: lista.length,
+        totalEncontrado: resultados.filter((item) => item.ok).length,
+        resultados
+      }, null, 2), {
+        status: 200,
         headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
       });
     }
@@ -636,7 +701,7 @@ function getHtmlDemo() {
 </head>
 <body>
   <div class="container">
-    <div class="badge">⚡ 1,2M CEPs DNE &bull; Geolog IBGE (5.570 Cidades) &bull; Latência sub-2ms</div>
+    <div class="badge">⚡ Consulta CEP via KV e provedores externos &bull; Geolog de municípios</div>
     <h1>CEP &amp; Geolog Pro — API Oficial</h1>
     <p class="lead">Consulta postal com latitude/longitude, validação de número na rua e rastreio criptográfico SHA-256 para LGPD.</p>
     <div class="card">

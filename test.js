@@ -2,7 +2,7 @@
  * test.js
  * Bateria de Testes Unitários do CEP & Geolog Pro
  */
-import { validarCepEstrutura } from './worker.js';
+import worker, { validarCepEstrutura } from './worker.js';
 
 let passed = 0;
 let failed = 0;
@@ -43,6 +43,47 @@ assert(reps.valido === false, 'Rejeita dígitos repetidos');
 
 const curto = validarCepEstrutura('1234');
 assert(curto.valido === false, 'Rejeita tamanho menor que 8 dígitos');
+
+// 3. Consulta em lote
+console.log('\n--- 3. Rota de Consulta em Lote ---');
+const loteResponse = await worker.fetch(new Request('https://api.test/api/cep/lote', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ceps: ['invalido', '11111111'] })
+}), {});
+const loteBody = await loteResponse.json();
+assert(loteResponse.status === 200, 'A rota de lote é reconhecida');
+assert(loteBody.totalSolicitado === 2 && loteBody.resultados.length === 2, 'O lote retorna somente os CEPs solicitados');
+assert(loteBody.resultados.every((item) => item.ok === false), 'CEPs inválidos são reportados individualmente');
+
+const sucessoLoteResponse = await worker.fetch(new Request('https://api.test/api/cep/lote', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ceps: ['01310-100'] })
+}), {
+  CEPS_KV: {
+    get: async (key) => key === '01310100' ? {
+      logradouro: 'Avenida Paulista',
+      bairro: 'Bela Vista',
+      cidade: 'São Paulo',
+      uf: 'SP',
+      ibge: '3550308',
+      fonte: 'kv_test'
+    } : null
+  }
+});
+const sucessoLoteBody = await sucessoLoteResponse.json();
+assert(sucessoLoteBody.totalEncontrado === 1 && sucessoLoteBody.resultados[0].cepLimpo === '01310100', 'O lote resolve e retorna somente o CEP solicitado');
+
+const limiteResponse = await worker.fetch(new Request('https://api.test/api/ceps/lote', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ceps: Array(6).fill('invalido') })
+}), {});
+assert(limiteResponse.status === 413, 'O lote gratuito acima de cinco itens é rejeitado claramente');
+
+const metodoResponse = await worker.fetch(new Request('https://api.test/api/cep/lote'), {});
+assert(metodoResponse.status === 405, 'A rota de lote exige POST');
 
 console.log(`\n📊 Resultado: ${passed} passaram, ${failed} falharam.\n`);
 
