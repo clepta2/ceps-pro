@@ -1,0 +1,18 @@
+name = "ceps-pro-api"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "CEPS_KV"
+id = "c7f0f2a22f9b4fc8ba045671ed6797f8"
+
+[vars]
+SERVICE_NAME = "Ceps Pro API"
+ENVIRONMENT = "production"
+GITHUB_REPO = "clepta2/ceps-pro"
+DOCS_URL = "https://github.com/clepta2/ceps-pro"
+API_VERSION = "1.0.0"

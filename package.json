@@ -1,0 +1,29 @@
+{
+  "name": "ceps-pro",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SDK e API Oficial de Consulta Postal de CEPs e Geolog (100% Brasil) na Cloudflare Edge Anycast (<2ms).",
+  "main": "ceps-pro.js",
+  "scripts": {
+    "test": "node test.js",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": [
+    "cep",
+    "geolog",
+    "correios",
+    "dne",
+    "ibge",
+    "cnefe",
+    "lat-long",
+    "enderecos",
+    "cloudflare-worker",
+    "edge-computing"
+  ],
+  "author": "clepta2 <clepta2@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clepta2/ceps-pro.git"
+  }
+}
