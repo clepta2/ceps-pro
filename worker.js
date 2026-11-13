@@ -403,6 +403,21 @@ export default {
       });
     }
 
+    // 3.1 Verifica??o de Cache Anycast Nativo Cloudflare (Sub-2ms)
+    const hasEdgeCache = typeof caches !== 'undefined' && caches.default && request.method === 'GET';
+    const cacheKey = hasEdgeCache ? new Request(url.toString(), { method: 'GET' }) : null;
+    if (hasEdgeCache && !pathname.includes('/health') && !pathname.includes('/status') && pathname !== '/' && pathname !== '/demo') {
+      try {
+        const cached = await caches.default.match(cacheKey);
+        if (cached) {
+          const res = new Response(cached.body, cached);
+          res.headers.set('CF-Cache-Status', 'HIT');
+          res.headers.set('X-Edge-Cache', 'HIT (<2ms Anycast RAM)');
+          return res;
+        }
+      } catch (_) {}
+    }
+
     // 4. Healthcheck Oficial
     if (pathname === '/health' || pathname === '/status') {
       return new Response(JSON.stringify({
@@ -687,14 +702,21 @@ export default {
         plano: isPro ? 'Pro' : 'Gratuito (1 req/s)'
       };
 
-      return new Response(JSON.stringify(payload, null, 2), {
+      const response = new Response(JSON.stringify(payload, null, 2), {
         status: 200,
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
+          'CF-Cache-Status': 'MISS',
+          'X-Edge-Cache': 'MISS (Anycast origin)',
           'X-Audit-Hash': auditoria.hash,
           ...CORS_HEADERS
         }
       });
+      if (hasEdgeCache && ctx && typeof ctx.waitUntil === 'function') {
+        ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+      }
+      return response;
     }
 
     return new Response(JSON.stringify({ ok: false, error: 'Endpoint não encontrado. Use /api/cep/:cep' }), {
