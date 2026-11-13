@@ -372,7 +372,16 @@ export default {
                    request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') ||
                    url.searchParams.get('api_key') ||
                    url.searchParams.get('key') || '';
-    const isPro = String(apiKey).trim().length >= 16;
+    const cleanKey = String(apiKey).trim();
+    const isPro = Boolean(
+      cleanKey && (
+        cleanKey.startsWith('cep_live_') || 
+        cleanKey.startsWith('cep_pro_') || 
+        cleanKey.startsWith('cep_master_') || 
+        cleanKey.startsWith('pnt_live_') ||
+        (env && (env.API_KEY === cleanKey || env.PRO_KEY === cleanKey))
+      ) && cleanKey.length >= 16
+    );
     const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('x-real-ip') || '127.0.0.1';
     const maxReqs = isPro ? 300 : 60;
     const rl = checkRateLimit(isPro ? apiKey : clientIp, maxReqs, 60000);
@@ -509,6 +518,97 @@ export default {
         totalSolicitado: lista.length,
         totalEncontrado: resultados.filter((item) => item.ok).length,
         resultados
+      }, null, 2), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+      });
+    }
+
+    // 6.1 Busca Reversa de CEP por Logradouro (/api/cep/busca)
+    if (pathname === '/api/cep/busca' || pathname === '/api/busca-cep') {
+      const ufParam = (url.searchParams.get('uf') || '').toUpperCase();
+      const cidadeParam = url.searchParams.get('cidade') || '';
+      const logradouroParam = url.searchParams.get('logradouro') || url.searchParams.get('rua') || '';
+
+      let resultados = [];
+      if (ufParam && cidadeParam && logradouroParam) {
+        try {
+          const resVia = await fetch(`https://viacep.com.br/ws/${encodeURIComponent(ufParam)}/${encodeURIComponent(cidadeParam)}/${encodeURIComponent(logradouroParam)}/json/`, {
+            headers: { 'Accept': 'application/json' }
+          });
+          if (resVia.ok) {
+            const data = await resVia.json();
+            if (Array.isArray(data)) resultados = data;
+          }
+        } catch (_) {}
+      }
+
+      return new Response(JSON.stringify({
+        ok: true,
+        filtros: { uf: ufParam, cidade: cidadeParam, logradouro: logradouroParam },
+        totalEncontrados: resultados.length,
+        resultados
+      }, null, 2), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+      });
+    }
+
+    // 6.2 C?lculo de Dist?ncia entre dois CEPs (/api/cep/distancia)
+    if (pathname === '/api/cep/distancia' || pathname === '/api/distancia-cep') {
+      let cepA = '';
+      let cepB = '';
+      if (bodyJson) {
+        cepA = bodyJson.origem || bodyJson.cep1 || bodyJson.cepA || '';
+        cepB = bodyJson.destino || bodyJson.cep2 || bodyJson.cepB || '';
+      }
+      if (!cepA || !cepB) {
+        cepA = url.searchParams.get('origem') || url.searchParams.get('cep1') || '';
+        cepB = url.searchParams.get('destino') || url.searchParams.get('cep2') || '';
+      }
+
+      const cleanA = String(cepA).replace(/\D/g, '');
+      const cleanB = String(cepB).replace(/\D/g, '');
+
+      if (cleanA.length !== 8 || cleanB.length !== 8) {
+        return new Response(JSON.stringify({ ok: false, error: 'Forne?a dois CEPs v?lidos de 8 d?gitos ("origem" e "destino").' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+        });
+      }
+
+      const resA = await resolverCep(cleanA, env);
+      const resB = await resolverCep(cleanB, env);
+
+      if (!resA || !resB) {
+        return new Response(JSON.stringify({ ok: false, error: 'Um ou ambos os CEPs n?o puderam ser localizados.' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
+        });
+      }
+
+      const latA = resA.geolocalizacao?.latitude || -23.55;
+      const lonA = resA.geolocalizacao?.longitude || -46.63;
+      const latB = resB.geolocalizacao?.latitude || -22.90;
+      const lonB = resB.geolocalizacao?.longitude || -43.17;
+
+      const R = 6371;
+      const dLat = (latB - latA) * Math.PI / 180;
+      const dLon = (lonB - lonA) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(latA * Math.PI / 180) * Math.cos(latB * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const distanciaKm = Math.round(R * c * 10) / 10;
+      const rodoviariaKm = Math.round(distanciaKm * 1.25);
+
+      return new Response(JSON.stringify({
+        ok: true,
+        origem: { cep: cleanA, cidade: resA.cidade, uf: resA.uf, lat: latA, lon: lonA },
+        destino: { cep: cleanB, cidade: resB.cidade, uf: resB.uf, lat: latB, lon: lonB },
+        distanciaLinhaRetaKm: distanciaKm,
+        distanciaEstimadaRodoviariaKm: rodoviariaKm,
+        tempoEstimadoHoras: Math.round((rodoviariaKm / 80) * 10) / 10
       }, null, 2), {
         status: 200,
         headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
