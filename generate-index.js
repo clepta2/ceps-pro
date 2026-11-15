@@ -5,8 +5,8 @@ const html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CEPs Pro â€¢ Consulta Postal & Geolog Anycast â€¢ Ponte API Market</title>
-  <meta name="description" content="Consulta ultrarrÃ¡pida (<8ms) de 1,2 milhÃ£o de CEPs brasileiros com coordenadas GPS, cÃ³digo IBGE e DDD oficial na Cloudflare Edge Anycast." />
+  <title>CEPs Pro • Consulta Postal & Geolog Anycast • Ponte API Market</title>
+  <meta name="description" content="Consulta ultrarrápida (<8ms) de 1,2 milhão de CEPs brasileiros com coordenadas GPS, código IBGE e DDD oficial na Cloudflare Edge Anycast." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -191,10 +191,10 @@ const html = `<!DOCTYPE html>
 <body>
   <div class="app-shell">
     <!-- Sidebar Oficial do Ecossistema Ponte / OZPro -->
-    <aside class="sidebar" aria-label="NavegaÃ§Ã£o principal">
+    <aside class="sidebar" aria-label="Navegação principal">
       <a class="brand" href="#consulta" aria-label="Ponte API, CEPs Pro">
         <img src="brand/ozpro-mark.svg" alt="Ponte API Logo" style="width:38px;height:38px;border-radius:10px;object-fit:contain;background:var(--mint);padding:4px;box-shadow:0 4px 12px rgba(163,230,53,0.35);" />
-        <span><strong>ponte</strong><small>CEPS PRO Â· OZPRO</small></span>
+        <span><strong>ponte</strong><small>CEPS PRO · OZPRO</small></span>
       </a>
 
       <nav class="primary-nav" id="primary-nav">
@@ -209,7 +209,7 @@ const html = `<!DOCTYPE html>
           <i data-lucide="layers"></i> <span>Consulta em Lote</span>
         </button>
         <button class="nav-link" data-view="docs">
-          <i data-lucide="book-open"></i> <span>DocumentaÃ§Ã£o REST</span>
+          <i data-lucide="book-open"></i> <span>Documentação REST</span>
         </button>
 
         <div class="nav-section-label">ECOSSISTEMA PONTE</div>
@@ -227,7 +227,7 @@ const html = `<!DOCTYPE html>
       <div class="sidebar-bottom">
         <div class="status-row">
           <span class="status-dot connected"></span>
-          <span>Cloudflare Edge Â· &lt;8ms</span>
+          <span>Cloudflare Edge · &lt;8ms</span>
         </div>
         <div class="profile-row">
           <div class="avatar lg">CP</div>
@@ -236,11 +236,11 @@ const html = `<!DOCTYPE html>
             <span>Base Postal Soberana DNE</span>
           </div>
         </div>
-        <div class="sidebar-version">v2.0.0 Â· 1.2M+ CEPs Â· GPS</div>
+        <div class="sidebar-version">v2.0.0 · 1.2M+ CEPs · GPS</div>
       </div>
     </aside>
 
-    <!-- Ãrea Principal -->
+    <!-- Área Principal -->
     <main class="main-area">
       <!-- Topbar Oficial -->
       <header class="topbar">
@@ -260,39 +260,39 @@ const html = `<!DOCTYPE html>
             <i data-lucide="moon"></i>
           </button>
           <a href="https://ponte-marketplace.maputo2.workers.dev" target="_blank" rel="noopener" class="primary-button accent" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:0 16px;height:36px;">
-            <i data-lucide="sparkles"></i> <span>CatÃ¡logo Completo</span>
+            <i data-lucide="sparkles"></i> <span>Catálogo Completo</span>
           </a>
         </div>
       </header>
 
-      <!-- ConteÃºdo da PÃ¡gina -->
+      <!-- Conteúdo da Página -->
       <div class="content-wrap">
         <div class="page-heading">
           <div>
             <p class="eyebrow">BASE POSTAL SOBERANA DNE & GEOLOG</p>
-            <h1>CEPs Pro â€¢ Console Oficial Anycast</h1>
+            <h1>CEPs Pro • Console Oficial Anycast</h1>
             <p class="page-subtitle">
-              Consulta ultrarrÃ¡pida (&lt;8ms) de 1,2 milhÃ£o de CEPs brasileiros com autopreenchimento de endereÃ§os, coordenadas geogrÃ¡ficas GPS (latitude/longitude), cÃ³digo IBGE e DDD oficial na borda Cloudflare.
+              Consulta ultrarrápida (&lt;8ms) de 1,2 milhão de CEPs brasileiros com autopreenchimento de endereços, coordenadas geográficas GPS (latitude/longitude), código IBGE e DDD oficial na borda Cloudflare.
             </p>
           </div>
         </div>
 
-        <!-- Cards de MÃ©tricas -->
+        <!-- Cards de Métricas -->
         <div class="billing-models-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom: 26px;">
           <div class="model-card credit-card" style="padding:18px 22px;">
             <div class="model-card-header" style="margin-bottom:10px;">
               <span class="model-badge credit"><i data-lucide="map-pin"></i> 1.2M+ CEPS DNE</span>
             </div>
-            <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">DiretÃ³rio Postal</div>
-            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Logradouros, bairros, municÃ­pios e seccionamentos postais oficiais.</p>
+            <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">Diretório Postal</div>
+            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Logradouros, bairros, municípios e seccionamentos postais oficiais.</p>
           </div>
 
           <div class="model-card subscription-card" style="padding:18px 22px;">
             <div class="model-card-header" style="margin-bottom:10px;">
               <span class="model-badge sub"><i data-lucide="compass"></i> COORDENADAS GPS</span>
             </div>
-            <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">GeolocalizaÃ§Ã£o</div>
-            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Latitude e longitude integradas para cÃ¡lculo de frete e rotas de entrega.</p>
+            <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">Geolocalização</div>
+            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Latitude e longitude integradas para cálculo de frete e rotas de entrega.</p>
           </div>
 
           <div class="model-card tier-card" style="padding:18px 22px;">
@@ -300,14 +300,14 @@ const html = `<!DOCTYPE html>
               <span class="model-badge tier"><i data-lucide="zap"></i> SUB-8MS ANYCAST</span>
             </div>
             <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">Cache Inteligente</div>
-            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Cache Anycast de 7 dias na RAM da Cloudflare para formulÃ¡rios sem fricÃ§Ã£o.</p>
+            <p style="font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;">Cache Anycast de 7 dias na RAM da Cloudflare para formulários sem fricção.</p>
           </div>
         </div>
 
         <!-- Abas -->
         <div class="tab-nav-bar">
           <button class="tab-nav-btn is-active" data-tab="consulta">
-            <i data-lucide="map-pin"></i> <span>Busca Postal & EndereÃ§o</span>
+            <i data-lucide="map-pin"></i> <span>Busca Postal & Endereço</span>
           </button>
           <button class="tab-nav-btn" data-tab="geolog">
             <i data-lucide="compass"></i> <span>Geolog & GPS</span>
@@ -316,7 +316,7 @@ const html = `<!DOCTYPE html>
 
         <!-- Playground Split-Screen de 2 Colunas -->
         <div class="playground-split">
-          <!-- Coluna 1: FormulÃ¡rio e Painel Visual -->
+          <!-- Coluna 1: Formulário e Painel Visual -->
           <div class="playground-left">
             <div id="section-consulta" class="tab-pane">
               <div class="card-dashboard">
@@ -328,10 +328,10 @@ const html = `<!DOCTYPE html>
                   <span class="status-badge-pill green">DNE Correios</span>
                 </div>
                 <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.5;">
-                  Digite o CEP (com ou sem hÃ­fen) para autopreencher endereÃ§o, coordenadas e cÃ³digo IBGE:
+                  Digite o CEP (com ou sem hífen) para autopreencher endereço, coordenadas e código IBGE:
                 </p>
 
-                <!-- Input e BotÃ£o de Busca -->
+                <!-- Input e Botão de Busca -->
                 <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
                   <input type="text" id="cep-input" value="01310-100" placeholder="01310-100..." maxlength="9" style="flex:2;min-width:140px;height:44px;padding:0 14px;border:1px solid var(--line);border-radius:var(--radius-md);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--ink);background:var(--paper);outline:none;" />
                   <button id="btn-exec-cep" class="primary-button accent" style="height:44px;padding:0 18px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;">
@@ -339,9 +339,9 @@ const html = `<!DOCTYPE html>
                   </button>
                 </div>
 
-                <!-- Presets RÃ¡pidos Padronizados -->
+                <!-- Presets Rápidos Padronizados -->
                 <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-size:11.5px;margin-bottom:20px;">
-                  <span style="color:var(--muted);font-weight:600;">Exemplos rÃ¡pidos:</span>
+                  <span style="color:var(--muted);font-weight:600;">Exemplos rápidos:</span>
                   <button class="secondary-button sample-cep" data-cep="01310100" style="padding:4px 10px;font-size:11.5px;display:inline-flex;align-items:center;gap:5px;">
                     <i data-lucide="building"></i> <span>Av. Paulista (SP)</span>
                   </button>
@@ -360,7 +360,7 @@ const html = `<!DOCTYPE html>
                 <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--paper);">
                   <div style="padding:12px 16px;background:var(--paper-elevated,#f8fafc);border-bottom:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;">
                     <i data-lucide="clipboard-list"></i>
-                    <span>Dados de EndereÃ§o & LocalizaÃ§Ã£o</span>
+                    <span>Dados de Endereço & Localização</span>
                   </div>
                   <table class="specs-table">
                     <tbody>
@@ -373,11 +373,11 @@ const html = `<!DOCTYPE html>
                         <td class="val-col" id="val-bairro">Bela Vista</td>
                       </tr>
                       <tr>
-                        <td class="label-col">MunicÃ­pio / UF</td>
-                        <td class="val-col" id="val-cidade-uf">SÃ£o Paulo (SP)</td>
+                        <td class="label-col">Município / UF</td>
+                        <td class="val-col" id="val-cidade-uf">São Paulo (SP)</td>
                       </tr>
                       <tr>
-                        <td class="label-col">CÃ³digo IBGE</td>
+                        <td class="label-col">Código IBGE</td>
                         <td class="val-col" id="val-ibge" style="font-family:'JetBrains Mono',monospace;">3550308</td>
                       </tr>
                       <tr>
@@ -400,12 +400,12 @@ const html = `<!DOCTYPE html>
                 <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
                   <span style="display:flex;align-items:center;gap:8px;">
                     <i data-lucide="compass" style="color:var(--blue);"></i>
-                    <span>GeolocalizaÃ§Ã£o & Latitude/Longitude</span>
+                    <span>Geolocalização & Latitude/Longitude</span>
                   </span>
                   <span class="status-badge-pill blue">WGS 84 GPS</span>
                 </div>
                 <div id="geolog-display-box" style="padding:16px;border-radius:var(--radius-md);background:var(--paper-elevated,#f8fafc);border:1px solid var(--line);margin-top:10px;font-size:13px;">
-                  Coordenadas prontas para uso em APIs do Google Maps, OpenStreetMap e cÃ¡lculos de distÃ¢ncia Haversine.
+                  Coordenadas prontas para uso em APIs do Google Maps, OpenStreetMap e cálculos de distância Haversine.
                 </div>
               </div>
             </div>
@@ -431,14 +431,14 @@ const html = `<!DOCTYPE html>
                 </button>
               </div>
 
-              <!-- Caixa de CÃ³digo do Snippet -->
+              <!-- Caixa de Código do Snippet -->
               <div class="snippet-code-box" style="padding:14px 18px;background:rgba(0,0,0,0.30);border-bottom:1px solid rgba(255,255,255,0.06);">
                 <pre class="snippet-pre" style="margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;color:#7dd3fc;line-height:1.5;overflow-x:auto;"><code id="snippet-code">curl -s "https://ceps-pro-api.vicknovais03.workers.dev/api/cep/01310100" \
   -H "Authorization: ******" \
   -H "x-api-key: cep_live_dne_2026"</code></pre>
               </div>
 
-              <!-- Barra de ExecuÃ§Ã£o Sandbox -->
+              <!-- Barra de Execução Sandbox -->
               <div class="playground-bar">
                 <span class="method-tag get">GET</span>
                 <code class="endpoint-code" id="endpoint-display" style="font-size:12px;">/api/cep/01310100</code>
@@ -451,7 +451,7 @@ const html = `<!DOCTYPE html>
               <div class="playground-console" style="min-height:300px;max-height:540px;overflow-y:auto;padding:16px;">
                 <div class="console-response-header" id="console-header" style="font-size:11.5px;margin-bottom:10px;">
                   <span class="badge-200" id="console-status">200 OK</span>
-                  <span id="console-latency">LatÃªncia: 4.2ms</span>
+                  <span id="console-latency">Latência: 4.2ms</span>
                   <span>Cloudflare Anycast</span>
                 </div>
                 <pre class="console-json" id="console-output" style="margin:0;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#f8fafc;line-height:1.5;"></pre>
@@ -463,7 +463,7 @@ const html = `<!DOCTYPE html>
     </main>
   </div>
 
-  <!-- Script da AplicaÃ§Ã£o e IntegraÃ§Ã£o -->
+  <!-- Script da Aplicação e Integração -->
   <script type="module">
     // Tema Claro / Escuro
     const themeBtn = document.getElementById('theme-toggle-btn');
@@ -481,7 +481,7 @@ const html = `<!DOCTYPE html>
       if (window.lucide) window.lucide.createIcons();
     }
 
-    // NavegaÃ§Ã£o de Abas
+    // Navegação de Abas
     const tabBtns = document.querySelectorAll('.tab-nav-btn, .primary-nav .nav-link[data-view]');
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -498,7 +498,7 @@ const html = `<!DOCTYPE html>
           consulta: 'Consulta Postal CEP',
           geolog: 'Geolog & GPS',
           lote: 'Consulta em Lote',
-          docs: 'DocumentaÃ§Ã£o REST'
+          docs: 'Documentação REST'
         };
         if (bread && titles[tabKey]) bread.textContent = titles[tabKey];
         updateSnippet();
@@ -542,7 +542,7 @@ const html = `<!DOCTYPE html>
       navigator.clipboard.writeText(txt).then(() => alert('Snippet copiado com sucesso!'));
     });
 
-    // â”€â”€ LÃ“GICA DE BUSCA DE CEP â”€â”€
+    // â”€â”€ LÓGICA DE BUSCA DE CEP â”€â”€
     async function executarBuscaCep() {
       const raw = document.getElementById('cep-input').value;
       const clean = raw.replace(/\\D/g, '');
@@ -561,19 +561,19 @@ const html = `<!DOCTYPE html>
 
         consoleStatus.textContent = res.ok ? '200 OK' : '400 ERRO';
         consoleStatus.className = res.ok ? 'badge-200' : 'badge-500';
-        consoleLat.textContent = \`LatÃªncia: \${lat}ms\`;
+        consoleLat.textContent = \`Latência: \${lat}ms\`;
         consoleOutput.textContent = JSON.stringify(data, null, 2);
 
         if (data.cep || data.logradouro) {
-          document.getElementById('val-logradouro').textContent = data.logradouro || 'NÃ£o informado';
-          document.getElementById('val-bairro').textContent = data.bairro || 'NÃ£o informado';
+          document.getElementById('val-logradouro').textContent = data.logradouro || 'Não informado';
+          document.getElementById('val-bairro').textContent = data.bairro || 'Não informado';
           document.getElementById('val-cidade-uf').textContent = \`\${data.cidade || data.localidade || ''} (\${data.uf || ''})\`;
           document.getElementById('val-ibge').textContent = data.ibge || data.codigoIbge || '-';
           
           if (data.coordenadas) {
             document.getElementById('val-coordenadas').textContent = \`\${data.coordenadas.latitude}, \${data.coordenadas.longitude}\`;
           } else {
-            document.getElementById('val-coordenadas').textContent = 'DisponÃ­vel na versÃ£o Pro';
+            document.getElementById('val-coordenadas').textContent = 'Disponível na versão Pro';
           }
 
           document.getElementById('val-ddd').textContent = data.ddd || '-';
@@ -597,7 +597,7 @@ const html = `<!DOCTYPE html>
 
     document.getElementById('btn-run-sandbox').addEventListener('click', executarBuscaCep);
 
-    // InicializaÃ§Ã£o
+    // Inicialização
     renderLucide();
     setTimeout(() => {
       renderLucide();
