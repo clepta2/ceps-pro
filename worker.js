@@ -10,6 +10,7 @@
  */
 
 import { GEO_MUNICIPIOS_IBGE, GEO_MUNICIPIOS_NOME } from './municipios_geo.js';
+import { STYLES_CSS, HTML_INDEX, OZPRO_MARK_SVG } from './site-assets.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -418,6 +419,27 @@ export default {
       } catch (_) {}
     }
 
+    // ── ROTA: ARQUIVOS ESTÁTICOS DO SITE PRÓPRIO (TEMPLATE PONTE API MARKETPLACE) ──
+    if (pathname === '/styles.css' || pathname === '/ponte-suite.css') {
+      return new Response(STYLES_CSS, {
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'text/css; charset=utf-8',
+          'Cache-Control': 'public, max-age=604800, s-maxage=2592000'
+        }
+      });
+    }
+
+    if (pathname === '/brand/ozpro-mark.svg') {
+      return new Response(OZPRO_MARK_SVG, {
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'image/svg+xml; charset=utf-8',
+          'Cache-Control': 'public, max-age=2592000, s-maxage=2592000'
+        }
+      });
+    }
+
     // 4. Healthcheck Oficial
     if (pathname === '/health' || pathname === '/status') {
       return new Response(JSON.stringify({
@@ -457,9 +479,13 @@ export default {
           headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS }
         });
       }
-      return new Response(getHtmlDemo(), {
+      return new Response(HTML_INDEX, {
         status: 200,
-        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=300, s-maxage=3600'
+        }
       });
     }
 
