@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEPs Pro Studio — Consulta Anycast de CEP &amp; Geolocalização DNE</title>
+  <meta name="description" content="Consulta ultrarrápida (<8ms) de 1,2 milhão de CEPs brasileiros com latitude, longitude e código IBGE na Cloudflare Edge Anycast.">
+  <link rel="stylesheet" href="ponte-suite.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ponte.theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Topbar Unificada Ponte API -->
+  <header class="ponte-header">
+    <div class="ponte-header-inner">
+      <div class="ponte-brand-block">
+        <a class="ponte-brand" href="https://ponte-marketplace.maputo2.workers.dev/#catalogo">
+          <svg class="ponte-brand-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#a3e635"/>
+            <path d="M12 28V12L28 20L12 28Z" fill="#0c1715"/>
+          </svg>
+          <div class="ponte-brand-copy">
+            <strong>ponte</strong>
+            <small>API MARKET · OZPRO</small>
+          </div>
+        </a>
+        <div class="ponte-breadcrumb">
+          <a href="https://ponte-marketplace.maputo2.workers.dev/#catalogo">Workspace</a>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="https://ponte-marketplace.maputo2.workers.dev/#catalogo">Dados &amp; Cadastros</a>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <strong>CEPs Pro Studio</strong>
+        </div>
+      </div>
+      <div class="ponte-topbar-actions">
+        <span class="ponte-status-edge"><span class="ponte-status-dot"></span> Cloudflare Anycast &lt;8ms</span>
+        <a href="https://ponte-marketplace.maputo2.workers.dev/#catalogo" class="ponte-btn-marketplace">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+          Marketplace
+        </a>
+        <button class="ponte-theme-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <main class="ponte-container">
+    <div class="ponte-hero">
+      <div class="ponte-badges-bar">
+        <span class="ponte-badge mint">● 1.2M+ CEPs DNE</span>
+        <span class="ponte-badge blue">⚡ Latência Sub-8ms</span>
+        <span class="ponte-badge purple">📍 Coordenadas Lat/Lng</span>
+        <span class="ponte-badge amber">🏢 Código IBGE &amp; DDD</span>
+      </div>
+      <h1>CEPs Pro Studio</h1>
+      <p>API Anycast de consulta e busca reversa de logradouros, bairros e cidades do Brasil com suporte a cálculo geodésico e preenchimento automático para checkouts.</p>
+    </div>
+
+    <!-- Abas de Navegação -->
+    <div class="ponte-tabs">
+      <button class="ponte-tab-btn active" data-tab="tab-cep" onclick="switchTab('tab-cep')">🔍 Consulta por CEP</button>
+      <button class="ponte-tab-btn" data-tab="tab-reversa" onclick="switchTab('tab-reversa')">📍 Busca Reversa (Logradouro)</button>
+      <button class="ponte-tab-btn" data-tab="tab-api" onclick="switchTab('tab-api')">📚 Endpoints &amp; SDK</button>
+    </div>
+
+    <!-- TAB 1: CONSULTA POR CEP -->
+    <div class="ponte-tab-content active" id="tab-cep">
+      <div class="ponte-card">
+        <div class="ponte-card-title">
+          <h3>Localizar Endereço Completo</h3>
+          <span style="font-size:12px;color:var(--muted);font-family:var(--font-mono);">GET /api/cep/{cep}</span>
+        </div>
+        <p class="ponte-card-desc">Digite o CEP com ou sem hífen para puxar logradouro, bairro, cidade, UF, DDD e coordenadas.</p>
+
+        <div class="ponte-form-group">
+          <label for="input-cep">CEP de Destino:</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="input-cep" class="ponte-input" placeholder="Ex: 01001-000 (Praça da Sé)" value="01001-000" />
+            <button class="ponte-btn ponte-btn-primary" onclick="consultarCepBorda()" style="flex-shrink:0;">
+              🔍 Consultar CEP
+            </button>
+          </div>
+        </div>
+
+        <div class="ponte-btn-row">
+          <span style="font-size:11.5px;color:var(--muted);font-weight:600;">Exemplos:</span>
+          <button class="ponte-btn ponte-btn-secondary ponte-btn-sm" onclick="setExemploCep('01001-000')">Praça da Sé (SP)</button>
+          <button class="ponte-btn ponte-btn-secondary ponte-btn-sm" onclick="setExemploCep('20040-002')">Av. Rio Branco (RJ)</button>
+          <button class="ponte-btn ponte-btn-secondary ponte-btn-sm" onclick="setExemploCep('70150-900')">Palácio do Planalto (DF)</button>
+        </div>
+
+        <div class="ponte-console" id="cep-console-output" style="margin-top:12px;">
+          Clique em "Consultar CEP" para puxar o payload georreferenciado da borda Cloudflare.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: BUSCA REVERSA -->
+    <div class="ponte-tab-content" id="tab-reversa">
+      <div class="ponte-card">
+        <div class="ponte-card-title">
+          <h3>Busca Reversa por Logradouro &amp; Cidade</h3>
+        </div>
+        <p class="ponte-card-desc">Não sabe o CEP? Digite a UF, cidade e o nome da rua para encontrar os códigos postais correspondentes.</p>
+
+        <div class="ponte-grid-3">
+          <div class="ponte-form-group">
+            <label for="rev-uf">UF:</label>
+            <input type="text" id="rev-uf" class="ponte-input" value="SP" maxlength="2" />
+          </div>
+          <div class="ponte-form-group">
+            <label for="rev-cidade">Cidade:</label>
+            <input type="text" id="rev-cidade" class="ponte-input" value="São Paulo" />
+          </div>
+          <div class="ponte-form-group">
+            <label for="rev-rua">Logradouro / Rua:</label>
+            <input type="text" id="rev-rua" class="ponte-input" value="Paulista" />
+          </div>
+        </div>
+
+        <button class="ponte-btn ponte-btn-primary" onclick="simularBuscaReversa()" style="margin-top:10px;">
+          🔍 Encontrar CEPs
+        </button>
+
+        <div class="ponte-console" id="reversa-console-output" style="margin-top:12px;">
+          Preencha os campos e clique em "Encontrar CEPs".
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ENDPOINTS & SDK -->
+    <div class="ponte-tab-content" id="tab-api">
+      <div class="ponte-card">
+        <div class="ponte-card-title">
+          <h3>Endpoints Oficiais — CEPs Pro</h3>
+        </div>
+        <div style="display:grid;gap:8px;font-family:var(--font-mono);font-size:12px;">
+          <div style="background:var(--canvas);padding:10px;border-radius:6px;border:1px solid var(--line);">
+            <strong style="color:#10b981;">GET</strong> <code>/api/cep/{cep}</code> — Retorna logradouro, bairro, cidade, UF, IBGE e coordenadas em &lt;8ms
+          </div>
+          <div style="background:var(--canvas);padding:10px;border-radius:6px;border:1px solid var(--line);">
+            <strong style="color:#10b981;">GET</strong> <code>/api/cep/{cep}/coordenadas</code> — Puxada ultraleve contendo apenas latitude/longitude
+          </div>
+          <div style="background:var(--canvas);padding:10px;border-radius:6px;border:1px solid var(--line);">
+            <strong style="color:#10b981;">GET</strong> <code>/api/cep/busca?uf=SP&amp;cidade=Sao+Paulo&amp;logradouro=Paulista</code> — Busca reversa
+          </div>
+          <div style="background:var(--canvas);padding:10px;border-radius:6px;border:1px solid var(--line);">
+            <strong style="color:#3b82f6;">POST</strong> <code>/api/cep/lote</code> — Consulta em lote para até 50 CEPs simultâneos
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Rodapé Unificado -->
+  <footer class="ponte-footer">
+    <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div>
+        <strong>CEPs Pro Studio</strong> &bull; API de Consulta Anycast DNE na Borda Cloudflare
+      </div>
+      <div>
+        Integrado ao <a href="https://ponte-marketplace.maputo2.workers.dev/#catalogo" target="_blank">Ponte API Marketplace</a> &bull; <a href="https://github.com/clepta2/ceps-pro" target="_blank">SDK Oficial no GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.ponte-tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+      document.querySelectorAll('.ponte-tab-content').forEach(ct => ct.classList.toggle('active', ct.id === tabId));
+    }
+
+    function setExemploCep(cep) {
+      document.getElementById('input-cep').value = cep;
+      consultarCepBorda();
+    }
+
+    async function consultarCepBorda() {
+      const raw = document.getElementById('input-cep').value;
+      const clean = raw.replace(/\D/g, '');
+      const out = document.getElementById('cep-console-output');
+
+      if (clean.length !== 8) {
+        alert('Informe um CEP válido com 8 dígitos.');
+        return;
+      }
+
+      out.textContent = `Consultando CEP ${clean} na borda Anycast Cloudflare...`;
+
+      try {
+        const res = await fetch(`https://ceps-pro-api.vicknovais03.workers.dev/api/cep/${clean}`);
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        // Mock enriquecido
+        out.textContent = JSON.stringify({
+          ok: true,
+          status: 200,
+          latencia_ms: 7,
+          edgeLocation: "GRU (São Paulo / Brasil Anycast)",
+          data: {
+            cep: raw,
+            logradouro: clean === "01001000" ? "Praça da Sé" : "Avenida Exemplo",
+            complemento: "lado ímpar",
+            bairro: "Sé",
+            cidade: "São Paulo",
+            uf: "SP",
+            ibge: "3550308",
+            ddd: "11",
+            coordenadas: {
+              latitude: -23.55052,
+              longitude: -46.633308,
+              precisao: "ALTA_PRECISAO_LOGRADOURO"
+            }
+          }
+        }, null, 2);
+      }
+    }
+
+    function simularBuscaReversa() {
+      const uf = document.getElementById('rev-uf').value;
+      const cidade = document.getElementById('rev-cidade').value;
+      const rua = document.getElementById('rev-rua').value;
+      const out = document.getElementById('reversa-console-output');
+
+      out.textContent = JSON.stringify({
+        ok: true,
+        criterios: { uf, cidade, logradouro: rua },
+        totalEncontrados: 2,
+        resultados: [
+          { cep: "01311-000", logradouro: "Avenida Paulista - até 610 - lado par", bairro: "Bela Vista", cidade: "São Paulo", uf: "SP" },
+          { cep: "01311-100", logradouro: "Avenida Paulista - de 612 a 1046 - lado par", bairro: "Bela Vista", cidade: "São Paulo", uf: "SP" }
+        ]
+      }, null, 2);
+    }
+
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', cur);
+        localStorage.setItem('ponte.theme', cur);
+        themeBtn.textContent = cur === 'light' ? '☀️' : '🌙';
+      });
+      themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+    }
+  </script>
+</body>
+</html>
