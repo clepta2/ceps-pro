@@ -5,3 +5,21 @@ node_modules/
 dist/
 *.log
 .DS_Store
+
+
+# ==============================================================================
+# PONTE API — BLINDAGEM DE ARQUIVOS SENSÍVEIS (ZERO LEAKS)
+# ==============================================================================
+.env
+.env.*
+!.env.example
+.dev.vars
+*.key
+*.pem
+*.pfx
+*.cert
+*.token
+*.secret
+id_rsa
+firebase-debug.log
+.wrangler/
